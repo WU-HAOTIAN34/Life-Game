@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <malloc.h>
 #include "game.h"
@@ -8,28 +9,40 @@
 //delete beforeMap and copy newMap after updating
 void UpdateMap() {
 	int i, j;
+	//update the newMap
 	FreeMap(newMap);
-	// create the new world a 2-D arry with rowSize * colSize
-	newMap = (int**)malloc(sizeof(int*) * rowSize);
-	for (i = 0; i < rowSize; i++) {
-		newMap[i] = (int*)malloc(sizeof(int) * colSize);
-	}
+	CreateMap(newMap);
 	// update every cell in the new world 
 	for (i = 0; i < rowSize; i++) {
 		for (j = 0; j < colSize; j++) {
 			newMap[i][j] = JudgeIfAlive(beforeMap, i, j);
 		}
 	}
-	//delete the beforeMap and create a new 2-D arry beforeMap
+	//update the beforeMap
 	FreeMap(beforeMap);
-	beforeMap = (int**)malloc(sizeof(int*) * rowSize);
-	for (i = 0; i < rowSize; i++) {
-		beforeMap[i] = (int*)malloc(sizeof(int) * colSize);
-	}
+	CreateMap(beforeMap);
 	//copy the newMap to beforeMap
 	for (i = 0; i < rowSize; i++) {
 		for (j = 0; j < colSize; j++) {
 			beforeMap[i][j] = newMap[i][j];
+		}
+	}
+}
+
+
+//use the address of map int** destination, global variable int rowSize, int cilSize
+//create a 2-D arry rowSize * colSize
+void CreateMap(int** destination) {
+	int i, j;
+	//create a 2-D arry
+	destination = (int**)malloc(sizeof(int*) * rowSize);
+	for (i = 0; i < rowSize; i++) {
+		destination[i] = (int*)malloc(sizeof(int) * colSize);
+	}
+	//initialize it with 0
+	for (i = 0; i < rowSize; i++) {
+		for (j = 0; j < colSize; j++) {
+			destination[i][j] == 0;
 		}
 	}
 }
@@ -80,8 +93,9 @@ void FreeMap(int** source) {
 }
 
 
-
-int ReadMap(FILE* file) {
+//use the pointer of the file FILE* file to load the map
+//successful return 1, otherwise return 0
+int LoadMap(FILE* file) {
 	int i;
 	if (!fread(&rowSize, sizeof(int), 1, file) || !fread(&colSize, sizeof(int), 1, file)) {
 		return 0;
@@ -100,6 +114,8 @@ int ReadMap(FILE* file) {
 }
 
 
+//use the pointer of the file FILE* file to store the last map
+//successful return 1, otherwise return 0
 int StoreMap(FILE* file) {
 	fwrite(rowSize, sizeof(int), 1, file);
 	fwrite(colSize, sizeof(int), 1, file);
@@ -108,6 +124,3 @@ int StoreMap(FILE* file) {
 	}
 	return 1;
 }
-
-
-
