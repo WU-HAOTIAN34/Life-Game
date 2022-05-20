@@ -4,7 +4,7 @@
 
 
 void AutomaticStep();
-
-
-
+int IfNumValid(char* num);
+void SpecificStep();
+void selfDefinedMap();
 #endif

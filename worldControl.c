@@ -10,50 +10,53 @@
 //use the global variable int** newMap and int** beforeMap
 //delete newMap and create the updated newMap by beforeMap
 //delete beforeMap and copy newMap after updating
-void UpdateMap() {
+int UpdateMap() {
 	int i, j;
-	//update the newMap
-	FreeMap(newMap);
-	CreateMap(newMap);
+	int ifStop = 1;
 	// update every cell in the new world 
 	for (i = 0; i < rowSize; i++) {
 		for (j = 0; j < colSize; j++) {
 			newMap[i][j] = JudgeIfAlive(beforeMap, i, j);
 		}
 	}
-	//update the beforeMap
-	FreeMap(beforeMap);
-	CreateMap(beforeMap);
+	for (i = 0; i < rowSize; i++) {
+		for (j = 0; j < colSize; j++) {
+			if (beforeMap[i][j] != newMap[i][j]) {
+				ifStop = 0;
+				break;
+			}
+		}
+		if (ifStop == 0) {
+			break;
+		}
+	}
 	//copy the newMap to beforeMap
 	for (i = 0; i < rowSize; i++) {
 		for (j = 0; j < colSize; j++) {
 			beforeMap[i][j] = newMap[i][j];
 		}
 	}
+	return ifStop;
 }
 
 
 //use the address of map int** destination, global variable int rowSize, int cilSize
 //create a 2-D arry rowSize * colSize
-int CreateMap(int** destination) {
+int** CreateMap() {
 	int i, j;
-	if (destination == NULL) {
-		return 0;
+	int** destination;
+	//create a 2-D arry
+	destination = (int**)malloc(sizeof(int*) * rowSize);
+	for (i = 0; i < rowSize; i++) {
+		destination[i] = (int*)malloc(sizeof(int) * colSize);
 	}
-	else {
-		//create a 2-D arry
-		destination = (int**)malloc(sizeof(int*) * rowSize);
-		for (i = 0; i < rowSize; i++) {
-			destination[i] = (int*)malloc(sizeof(int) * colSize);
+	//initialize it with 0
+	for (i = 0; i < rowSize; i++) {
+		for (j = 0; j < colSize; j++) {
+			destination[i][j] = 0;
 		}
-		//initialize it with 0
-		for (i = 0; i < rowSize; i++) {
-			for (j = 0; j < colSize; j++) {
-				destination[i][j] = 0;
-			}
-		}
-		return 1;
 	}
+	return destination;
 }
 
 
@@ -115,22 +118,36 @@ int LoadMap(FILE* file) {
 	memset(row, '\0', 1024);
 	memset(col, '\0', 1024);
 	int i = 0;
-	fscanf(file, "%[^\n]", ch1);
+	fgets(ch1, 1024, file);
 	while (ch1[i] != ' ') {
 		row[i] = ch1[i];
 		i++;
 	}
 	i++;
 	int j = 0;
-	while (ch1[i]) {
+	while (ch1[i] != '\n') {
 		col[j] = ch1[i];
 		j++;
 		i++;
 	}
 	colSize = StringToInt(col);
 	rowSize = StringToInt(row);
-	CreateMap(newMap);
-	char ch;
+	newMap = CreateMap();
+	for (int i = 0; i < rowSize; i++) {
+		memset(ch1, '\0', 1024);
+		fgets(ch1, 1024, file);
+		for (int j = 0; j < colSize; j++) {
+			newMap[i][j] = (int)(ch1[j]) - 48;
+		}
+	}
+	beforeMap = CreateMap();
+	for (int i = 0; i < rowSize; i++) {
+		for (int j = 0; j < colSize; j++) {
+			beforeMap[i][j] = newMap[i][j];
+		}
+	}
+
+	/*char ch;
 	CreateMap(newMap);
 	fgetc(file);
 	for (int i = 0; i < rowSize; i++) {
@@ -149,7 +166,7 @@ int LoadMap(FILE* file) {
 			FreeMap(newMap);
 			return -1;
 		}
-	}
+	}*/
 }
 
 
@@ -181,7 +198,9 @@ int StoreMap(FILE* file) {
 		for (int j = 0; j < colSize; j++) {
 			fputc(newMap[i][j] + 48, file);
 		}
-		putc('\n', file);
+		if (i != rowSize - 1) {
+			putc('\n', file);
+		}
 	}
 	return 1;
 }
@@ -200,11 +219,13 @@ int StringToInt(char* string) {
 }
 
 
-void AlterMap(int** destination, int x, int y) {
-	if (destination[x][y] == 0) {
-		destination[x][y] = 1;
+void AlterMap(int x, int y) {
+	if (newMap[x][y] == 0) {
+		newMap[x][y] = 1;
+		beforeMap[x][y] = 1;
 	}
 	else {
-		destination[x][y] = 0;
+		newMap[x][y] = 0;
+		beforeMap[x][y] = 0;
 	}
 }

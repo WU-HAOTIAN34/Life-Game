@@ -5,11 +5,11 @@
 //use the global variable int**newMap and int** beforeMap
 //delete newMap and create the updated newMap by beforeMap
 //delete beforeMap and copy newMap after updating
-void UpdateMap();
+int UpdateMap();
 
 //use the address of map int** destination, global variable int rowSize, int cilSize
 //create a 2-D arry rowSize * colSize
-int CreateMap(int** destination);
+int** CreateMap();
 
 //use map int**source and the coordinate of cell int x, int y
 //if alive return 1, if dead return 0
@@ -32,6 +32,6 @@ int StoreMap(FILE* file);
 //use the pointer of a string char* string, convert it to the integer and return
 int StringToInt(char* string);
 
-void AlterMap(int** destination, int x, int y);
+void AlterMap(int x, int y);
 
 #endif
