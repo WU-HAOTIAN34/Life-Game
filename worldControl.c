@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "game.h"
 #include "worldControl.h"
-
+#include <SDL2/SDL.h>
 
 //use the global variable int** newMap and int** beforeMap
 //delete newMap and create the updated newMap by beforeMap
@@ -96,12 +96,17 @@ int JudgeIfAlive(int** source, int x, int y) {
 
 
 //use the target int** source to delete it
-void FreeMap(int** source) {
+void FreeMap() {
 	//free every row
 	for (int i = 0; i < rowSize; i++) {
-		free(source[i]);
+		free(newMap[i]);
+		free(beforeMap[i]);
 	}
-	free(source);
+	free(newMap);
+	free(beforeMap);
+	newMap = NULL;
+	beforeMap = NULL;
+
 }
 
 
@@ -111,27 +116,42 @@ int LoadMap(FILE* file) {
 	if (file == NULL) {
 		return 0;
 	}
+	int i = -1, j = 0, k=0;
 	char ch1[1024];
 	char row[1024];
 	char col[1024];
+	char delay1[1024];
 	memset(ch1, '\0', 1024);
 	memset(row, '\0', 1024);
 	memset(col, '\0', 1024);
-	int i = 0;
+	memset(delay1, '\0', 1024);
 	fgets(ch1, 1024, file);
-	while (ch1[i] != ' ') {
-		row[i] = ch1[i];
+	while (k < 3) {
+		j = 0;
 		i++;
+		while ((int)ch1[i] >= 48 && (int)ch1[i] <= 57) {
+			k++;
+			while ((int)ch1[i] >= 48 && (int)ch1[i] <= 57) {
+				if (k == 1) {
+					delay1[j] = ch1[i];
+				}
+				if (k == 2) {
+					row[j] = ch1[i];
+				}
+				if (k == 3) {
+					col[j] = ch1[i];
+				}
+				j++;
+				i++;
+			}
+			break;
+		}
 	}
-	i++;
-	int j = 0;
-	while (ch1[i] != '\n') {
-		col[j] = ch1[i];
-		j++;
-		i++;
-	}
-	colSize = StringToInt(col);
+
+	delay = StringToInt(delay1);
 	rowSize = StringToInt(row);
+	colSize = StringToInt(col);
+	
 	newMap = CreateMap();
 	for (int i = 0; i < rowSize; i++) {
 		memset(ch1, '\0', 1024);
@@ -147,26 +167,6 @@ int LoadMap(FILE* file) {
 		}
 	}
 
-	/*char ch;
-	CreateMap(newMap);
-	fgetc(file);
-	for (int i = 0; i < rowSize; i++) {
-		for (int j = 0; j < colSize; j++) {
-			ch = fgetc(file);
-			if (ch == EOF || ch == '\n' || !((int)ch == 49 || (int)ch == 48)) {
-				FreeMap(newMap);
-				return -1;
-			}
-			else {
-				newMap[i][j] = (int)ch - 48;
-			}
-		}
-		ch = fgetc(file);
-		if (ch == EOF && ch != '\n') {
-			FreeMap(newMap);
-			return -1;
-		}
-	}*/
 }
 
 
@@ -207,13 +207,18 @@ int StoreMap(FILE* file) {
 
 
 //use the pointer of a string char* string, convert it to the integer and return
-int StringToInt(char* string) {
-	int len = strlen(string);
-	int pow = 1;
+int StringToInt(char* str) {
+	int i, j, k = 1;
+	int len = strlen(str);
+	
 	int res = 0;
-	for (int i = 0; i < len; i++) {
-		res += ((int)string[len - i - 1] - 48) * pow;
-		pow *= 10;
+	// calculate each digit of number
+	for (i = 0; i < len; i++) {
+		for (j = 0; j < len - i - 1; j++) {
+			k *= 10;
+		}
+		res += ((int)str[i] - 48) * k;
+		k = 1;
 	}
 	return res;
 }
