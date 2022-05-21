@@ -10,7 +10,7 @@ SRC= main.c game.c model.c worldControl.c
 
 CC =     gcc
 CFLAGS = -Wall -O
-LIBS =   -lSDL2 -lSDL2_image
+LIBS =   -lSDL2 -lSDL2_image -lSDL2_ttf
 
 # compile to  object code
 
