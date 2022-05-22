@@ -2,21 +2,21 @@
 #define __WORLDCONTROL_H__
 
 
-//use the global variable int**newMap and int** beforeMap
-//delete newMap and create the updated newMap by beforeMap
-//delete beforeMap and copy newMap after updating
+//use the global variable int** newMap and int** beforeMap
+//update the newMap and compare with beforeMap
+//if they are the same return 1, not return 0
 int UpdateMap();
 
-//use the address of map int** destination, global variable int rowSize, int cilSize
-//create a 2-D arry rowSize * colSize
+//use global variable int rowSize, int cilSize
+//create a 2-D arry rowSize * colSize and return the address
 int** CreateMap();
 
 //use map int**source and the coordinate of cell int x, int y
 //if alive return 1, if dead return 0
 int JudgeIfAlive(int** source, int x, int y);
 
-//use the target int** source to delete it
-void FreeMap(int** source);
+//free the space of nowMap and beforeMap
+void FreeMap();
 
 //use the pointer of the file FILE* file to load the map
 //succeed return 1, false return 0, the content of file is wrong return -1
@@ -30,8 +30,9 @@ char* IntToString(int x);
 int StoreMap(FILE* file);
 
 //use the pointer of a string char* string, convert it to the integer and return
-int StringToInt(char* string);
+int StringToInt(char* str);
 
+//use the direction x,y change one cell in nowMap and beforeMap
 void AlterMap(int x, int y);
 
 #endif

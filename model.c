@@ -1,21 +1,19 @@
 #define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <string.h>
-#include <SDL2/SDL.h>
 #include "worldControl.h"
 #include "model.h"
 #include "game.h"
+#include <SDL2/SDL.h>
+//#include <SDL.h>
 
 
 
-//this model allow users to enter a step, 
-//then the world will iteration to this step
 void SpecificStep() {
-	  // initialize the global variables
 	ifContinue = 0;
 	iterationNum = 0;
 	char aim[1024];
-	  //load world and recive entering
 	FILE* file = fopen("world.txt", "r");
 	LoadMap(file);
 	fclose(file);
@@ -30,14 +28,12 @@ void SpecificStep() {
 	else {
 		aimIterationNum = StringToInt(aim);
 	}
-	// draw thw window and deal with events
 	InitialSDL();
 	SDL_Event event;
 	while (iterationNum <= aimIterationNum) {
 		PresentMap();
 		SDL_Delay(delay);
 		while (SDL_PollEvent(&event)) {
-			    // clicking event: if click stop button, stop, if click run button, run 
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				if (event.button.x > 66 && event.button.x < 266 && event.button.y>670 && event.button.y < 850) {
 					ifContinue = 0;
@@ -46,7 +42,6 @@ void SpecificStep() {
 					ifContinue = 1;
 				}
 			}
-						// if click quit, free array and store
 			else if (event.type == SDL_QUIT) {
 				file = fopen("final.txt", "w");
 				StoreMap(file);
@@ -61,7 +56,6 @@ void SpecificStep() {
 			iterationNum++;
 		}
 	}
-	// end free and store
 	file = fopen("final.txt", "w");
 	StoreMap(file);
 	fclose(file);
@@ -70,18 +64,15 @@ void SpecificStep() {
 }
 
 
-//in this model the world will continue to iterate until the end
 void AutomaticStep() {
-	int end = 0; // judge if the world is final
+	int end = 0;
 	ifContinue = 0;
 	iterationNum = 0;
-	// load world and initialize SDL
 	FILE* file = fopen("world.txt", "r");
 	LoadMap(file);
 	fclose(file);
 	file = NULL;
 	InitialSDL();
-	// draw thw window and deal with events
 	SDL_Event event;
 	while (!end) {
 		PresentMap();
@@ -117,15 +108,12 @@ void AutomaticStep() {
 }
 
 
-//this model allow users to customize the world
-//users need to enter the number of rows, columns, and time of delay
-//users can initialize the world by clicking to define the state of cell
+
 void selfDefinedMap() {
-	int ifready = 0; // judge if users have finished initializing
+	int ifready = 0;
 	char entering[1024];
 	ifContinue = 0;
 	iterationNum = 0;
-	//recive row, column and delay
 	memset(entering, '\0', 1024);
 	printf("Please enter the number of rows: ");
 	scanf("%[^\n]s", entering);
@@ -159,7 +147,6 @@ void selfDefinedMap() {
 	else {
 		delay = StringToInt(entering);
 	}
-	//initialize SDL and the world
 	InitialSDL();
 	newMap = CreateMap();
 	beforeMap = CreateMap();
@@ -168,13 +155,11 @@ void selfDefinedMap() {
 		PresentMap();
 		SDL_Delay(250);
 		while (SDL_PollEvent(&event)) {
-			//click event: click in the range of a cell, it will change the state, alive to dead, dead to alive
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				if (event.button.x >= leftSize && event.button.x <= leftSize + edgeSize * colSize 
 					&& event.button.y >= topSize && event.button.y <= topSize + edgeSize * rowSize) {
 					AlterMap((event.button.y - topSize) / edgeSize, (event.button.x - leftSize) / edgeSize);
 				}
-				//click run button, finish innitializing 
 				else if (event.button.x > 332 && event.button.x < 532 && event.button.y>670 && event.button.y < 750) {
 					ifContinue = 1;
 					ifready = 1;
@@ -193,7 +178,6 @@ void selfDefinedMap() {
 	}
 	iterationNum = 0;
 	int end = 0;
-	//continue iterating until the end
 	while (!end) {
 		PresentMap();
 		SDL_Delay(delay);
@@ -228,7 +212,8 @@ void selfDefinedMap() {
 }
 
 
-//show the final world stored in final.txt
+
+
 void ShowFinalMap() {
 	FILE* file = fopen("final.txt", "r");
 	LoadMap(file);
@@ -252,9 +237,41 @@ void ShowFinalMap() {
 }
 
 
-//judge if the entering number string is valid:
-//doesn't begin with space and 0, doesn't end with space 
-//and no characters other than numbers 
+
+
+
+
+
+/*
+int LoadFinalMap(FILE* file) {
+	if (file == NULL) {
+		return 0;
+	}
+	char ch1[1024];
+	memset(ch1, '\0', 1024);
+	newMap = CreateMap();
+	while(fgets(ch1, 1024, file)!=EOF){
+		printf("%d\n", strlen(ch1));
+		for (int j = 0; j < strlen(ch1); j++) {
+			newMap[i][j] = (int)(ch1[j]) - 48;
+		}
+	}
+
+
+
+
+	for (int i = 0; i < rowSize; i++) {
+		memset(ch1, '\0', 1024);
+		fgets(ch1, 1024, file);
+		for (int j = 0; j < colSize; j++) {
+			newMap[i][j] = (int)(ch1[j]) - 48;
+		}
+	}
+
+}
+
+*/
+
 int IfNumValid(char* num) {
 	return (int)num[0] == 48 || num[0] == ' ' || num[strlen(num) - 1] == ' ' ||
 		strspn(num, "0123456789") != strlen(num) ||  strlen(num) <= 0;

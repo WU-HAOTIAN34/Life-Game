@@ -1,16 +1,17 @@
 #define SDL_MAIN_HANDLED
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-//#include "SDL.h"
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+#include <SDL2/SDL.h>
+#include<SDL2/SDL_ttf.h>
 #include "model.h"
 #include "worldControl.h"
 #include "game.h"
-#include <SDL2/SDL.h>
-#include<SDL2/SDL_ttf.h>
 
+
+//print the interface of the program
 void Interface() {
 	
 	char enter[100];	//recive entering 
@@ -19,8 +20,8 @@ void Interface() {
 	// option
 	
 	while (option != 5) {
-		printf("\nPlease choose an option: \n\n1. Register an account\n2. Login\n");
-		printf("3. Search for books\n4. Display all books\n5. Quit\nOption: ");
+		printf("\nPlease choose an option: \n\n1. Iterate to the specified step\n2. Iteration to final\n");
+		printf("3. Customize the world\n4. Show the last world\n5. Quit\nOption: ");
 		scanf("%[^\n]s", enter);
 		getchar();
 		option = (int)enter[0];
@@ -68,9 +69,10 @@ void Interface() {
 }
 
 
-
+//initialize the SDL
 void InitialSDL() {
 	window = NULL;
+	// judge if the SDL and SDL_ttf is available
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
 	}
@@ -83,6 +85,7 @@ void InitialSDL() {
 			printf("Erroe loading font. %s\n", TTF_GetError());
 		}
 	}
+	 //set the color of SDL_ttf
 	textColor.r = 0;
   	textColor.g = 0;
   	textColor.b = 0;
@@ -92,6 +95,7 @@ void InitialSDL() {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 	SDL_RenderPresent(renderer);
+	//load the images and create texture
 	deadCellSurface = SDL_LoadBMP("images/dead.bmp");
 	aliveCellSurface = SDL_LoadBMP("images/alive.bmp");
 	stopButtonSurface = SDL_LoadBMP("images/stop.bmp");
@@ -104,10 +108,10 @@ void InitialSDL() {
 }
 
 
-
-
+//draw the window, management the information string, world and button
 void PresentMap() {
 	int i, j;
+	//calculate the size of the edge of a cell and topSize, leftSize
 	if (rowSize <= colSize) {
 		edgeSize = 600 / colSize;
 	}
@@ -116,22 +120,19 @@ void PresentMap() {
 	}
 	topSize = 60 + (600 - edgeSize * rowSize) / 2;
 	leftSize = (600 - edgeSize * colSize) / 2;
-	
+	//set SDL_ttf the world information
 	SDL_RenderClear(renderer);
 	sprintf(message, "Generation: %d  Delay: %d  Status: %s", iterationNum, delay, ifContinue ? "Running" : "Pause");
 	messageSurface = TTF_RenderText_Solid(font, message, textColor);
   	messageTexture = SDL_CreateTextureFromSurface(renderer, messageSurface);	
-	
-
+	 //set the location
 	SDL_Rect offset0;
 	offset0.x = 5;
 	offset0.y = 10;
 	offset0.h = 40;
 	offset0.w = 590;
 	SDL_RenderCopy(renderer, messageTexture, NULL, &offset0);
-
-
-
+	//set the location of each cell
 	for (i = 0; i < rowSize; i++) {
 		for (j = 0; j < colSize; j++) {
 			if (newMap[i][j] == 1) {
@@ -142,6 +143,7 @@ void PresentMap() {
 			}
 		}
 	}
+	//set the location of the two buttons
 	SDL_Rect offset1;
 	offset1.x = 66;
 	offset1.y = 670;
@@ -162,11 +164,10 @@ void PresentMap() {
 }
 
 
-
-
+//draw a cell in the window
 void Apply(int x, int y, SDL_Renderer* renderer, SDL_Texture* texture) {
 	SDL_Rect offset;
-	
+	//set the location, height and width
 	offset.x = y * edgeSize + leftSize;
 	offset.y = x * edgeSize + topSize;
 	offset.h = edgeSize;

@@ -194,6 +194,22 @@ int StoreMap(FILE* file) {
 	if (file == NULL) {
 		return 0;
 	}
+	char ch[1024];
+	char* aim;
+	memset(ch, '\0', 1024);
+	aim = IntToString(delay);
+	strcat(ch, aim);
+	free(aim);
+	strcat(ch, " ");
+	aim = IntToString(rowSize);
+	strcat(ch, aim);
+	free(aim);
+	strcat(ch, " ");
+	aim = IntToString(colSize);
+	strcat(ch, aim);
+	free(aim);
+	strcat(ch, "\n");
+	fputs(ch, file);
 	for (int i = 0; i < rowSize; i++) {
 		for (int j = 0; j < colSize; j++) {
 			fputc(newMap[i][j] + 48, file);

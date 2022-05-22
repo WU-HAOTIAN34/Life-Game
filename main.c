@@ -1,57 +1,28 @@
-#define SDL_MAIN_HANDLED
 #define _CRT_SECURE_NO_WARNINGS
+#define SDL_MAIN_HANDLED
 #include <stdio.h>
-#include <SDL.h>
-#include "game.h"
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+#include <SDL2/SDL.h>
 #include "worldControl.h"
 #include "model.h"
+#include "game.h"
 
 
 int main() {
 	
-	selfDefinedMap();
-	return 0;
+	Interface();
 
+	SDL_FreeSurface(aliveCellSurface);
+	SDL_FreeSurface(deadCellSurface);
+	SDL_FreeSurface(stopButtonSurface);
+	SDL_FreeSurface(runButtonSurface);
 
-
-
-	/*FILE* file = fopen("world.txt", "r");
-	LoadMap(file);
-	fclose(file);
-	file = fopen("final.txt", "w");
-	StoreMap(file);
-	fclose(file);
-	file = NULL;
-	return 0;*/
+	SDL_DestroyTexture(aliveCellTexture);
+	SDL_DestroyTexture(deadCellTexture);
+	SDL_DestroyTexture(stopButtonTexture);
+	SDL_DestroyTexture(runButtonTexture);
+	
+	return 0;	
 }
-
-
-
-
-
-
-
-
-//int main(void)
-//{
-//	int delay = 160;
-//
-//	init();   // setup the game data
-//	render(); // render initial state
-//
-//	while (true) {      // game loop
-//
-//		input();            // keyboard input
-//
-//		if (!update())     // update and ...
-//			gameover();         // check if finished
-//
-//		render();           // render new state
-//
-//		SDL_Delay(delay); // time between frames (ms)
-//	}
-//	return 0;
-//}
