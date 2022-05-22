@@ -91,7 +91,7 @@ void InitialSDL(void) {
   	textColor.b = 0;
 	atexit(SDL_Quit); // set for clean-up on exit
 	SDL_CreateWindowAndRenderer(600, 760, 0, &window, &renderer);
-	SDL_SetWindowTitle(window, "Circles eat squares");
+	SDL_SetWindowTitle(window, "Game of life");
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 	SDL_RenderPresent(renderer);
