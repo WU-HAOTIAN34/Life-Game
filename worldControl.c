@@ -70,7 +70,7 @@ int JudgeIfAlive(int** source, int x, int y) {
 	//count the number of alive cells which are adjacent (x, y) 
 	for (i = -1; i < 2; i++) {
 		for (j = -1; j < 2; j++) {
-			if (x + i >= 0 && x + i < colSize && y + j >= 0 && y + j < rowSize && i * i + j * j != 0) {
+			if (x + i >= 0 && x + i < rowSize && y + j >= 0 && y + j < colSize && i * i + j * j != 0) {
 				if (source[x + i][y + j] == 1) {
 					num++;
 				}
