@@ -35,13 +35,13 @@ SDL_Color textColor;
 TTF_Font *font;
 
 //print the interface of the program
-void Interface();
+void Interface(void);
 
 //initialize the SDL
-void InitialSDL();
+void InitialSDL(void);
 
 //draw the window, management the information string, world and button
-void PresentMap();
+void PresentMap(void);
 
 //draw a cell in the window
 void Apply(int x, int y, SDL_Renderer* renderer, SDL_Texture* texture);

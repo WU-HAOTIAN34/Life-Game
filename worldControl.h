@@ -5,18 +5,18 @@
 //use the global variable int** newMap and int** beforeMap
 //update the newMap and compare with beforeMap
 //if they are the same return 1, not return 0
-int UpdateMap();
+int UpdateMap(void);
 
 //use global variable int rowSize, int cilSize
 //create a 2-D arry rowSize * colSize and return the address
-int** CreateMap();
+int** CreateMap(void);
 
 //use map int**source and the coordinate of cell int x, int y
 //if alive return 1, if dead return 0
 int JudgeIfAlive(int** source, int x, int y);
 
 //free the space of nowMap and beforeMap
-void FreeMap();
+void FreeMap(void);
 
 //use the pointer of the file FILE* file to load the map
 //succeed return 1, false return 0, the content of file is wrong return -1

@@ -3,14 +3,15 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <SDL2/SDL.h>
 #include "game.h"
 #include "worldControl.h"
-#include <SDL2/SDL.h>
+
 
 //use the global variable int** newMap and int** beforeMap
-//delete newMap and create the updated newMap by beforeMap
-//delete beforeMap and copy newMap after updating
-int UpdateMap() {
+//update the newMap and compare with beforeMap
+//if they are the same return 1, not return 0
+int UpdateMap(void) {
 	int i, j;
 	int ifStop = 1;
 	// update every cell in the new world 
@@ -19,6 +20,7 @@ int UpdateMap() {
 			newMap[i][j] = JudgeIfAlive(beforeMap, i, j);
 		}
 	}
+	//compare with beforeMap
 	for (i = 0; i < rowSize; i++) {
 		for (j = 0; j < colSize; j++) {
 			if (beforeMap[i][j] != newMap[i][j]) {
@@ -40,9 +42,9 @@ int UpdateMap() {
 }
 
 
-//use the address of map int** destination, global variable int rowSize, int cilSize
-//create a 2-D arry rowSize * colSize
-int** CreateMap() {
+//use global variable int rowSize, int cilSize
+//create a 2-D arry rowSize * colSize and return the address
+int** CreateMap(void) {
 	int i, j;
 	int** destination;
 	//create a 2-D arry
@@ -92,11 +94,14 @@ int JudgeIfAlive(int** source, int x, int y) {
 			return 0;
 		}
 	}
+	else{
+		return 0;
+	}
 }
 
 
-//use the target int** source to delete it
-void FreeMap() {
+//free the space of nowMap and beforeMap
+void FreeMap(void) {
 	//free every row
 	for (int i = 0; i < rowSize; i++) {
 		free(newMap[i]);
@@ -111,7 +116,7 @@ void FreeMap() {
 
 
 //use the pointer of the file FILE* file to load the map
-//succeed return 1, false return 0, the content of file is wrong return -1
+//succeed return 1, false return 0
 int LoadMap(FILE* file) {
 	if (file == NULL) {
 		return 0;
@@ -126,6 +131,7 @@ int LoadMap(FILE* file) {
 	memset(col, '\0', 1024);
 	memset(delay1, '\0', 1024);
 	fgets(ch1, 1024, file);
+	//divide the first lin into row, column and delay
 	while (k < 3) {
 		j = 0;
 		i++;
@@ -147,11 +153,11 @@ int LoadMap(FILE* file) {
 			break;
 		}
 	}
-
+	//convert the string to the integer
 	delay = StringToInt(delay1);
 	rowSize = StringToInt(row);
 	colSize = StringToInt(col);
-	
+	//load the world in nowMap and beforeMap
 	newMap = CreateMap();
 	for (int i = 0; i < rowSize; i++) {
 		memset(ch1, '\0', 1024);
@@ -166,7 +172,7 @@ int LoadMap(FILE* file) {
 			beforeMap[i][j] = newMap[i][j];
 		}
 	}
-
+	return 1;
 }
 
 
@@ -194,6 +200,7 @@ int StoreMap(FILE* file) {
 	if (file == NULL) {
 		return 0;
 	}
+	//store the row, col, delay
 	char ch[1024];
 	char* aim;
 	memset(ch, '\0', 1024);
@@ -210,6 +217,7 @@ int StoreMap(FILE* file) {
 	free(aim);
 	strcat(ch, "\n");
 	fputs(ch, file);
+	//store the final world
 	for (int i = 0; i < rowSize; i++) {
 		for (int j = 0; j < colSize; j++) {
 			fputc(newMap[i][j] + 48, file);
@@ -239,7 +247,7 @@ int StringToInt(char* str) {
 	return res;
 }
 
-
+//use the direction x,y change one cell in nowMap and beforeMap
 void AlterMap(int x, int y) {
 	if (newMap[x][y] == 0) {
 		newMap[x][y] = 1;

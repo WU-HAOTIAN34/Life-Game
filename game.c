@@ -12,7 +12,7 @@
 
 
 //print the interface of the program
-void Interface() {
+void Interface(void) {
 	
 	char enter[100];	//recive entering 
 	int option = 0;		// obtain the correct character
@@ -70,7 +70,7 @@ void Interface() {
 
 
 //initialize the SDL
-void InitialSDL() {
+void InitialSDL(void) {
 	window = NULL;
 	// judge if the SDL and SDL_ttf is available
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -109,7 +109,7 @@ void InitialSDL() {
 
 
 //draw the window, management the information string, world and button
-void PresentMap() {
+void PresentMap(void) {
 	int i, j;
 	//calculate the size of the edge of a cell and topSize, leftSize
 	if (rowSize <= colSize) {
