@@ -1,6 +1,6 @@
-# PPCWK2
+# A Life Game
 
-## A Life Game
+
 URL：https://github.com/WuHaoTian12/PPCWK2.git  
   
 Enter make all at the command line, then enter ./lifeGame.  
